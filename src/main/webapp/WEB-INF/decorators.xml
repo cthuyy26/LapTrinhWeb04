@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/WEB-INF/decorators">
+    <!-- Exclude files from decoration to prevent recursion -->
+    <excludes>
+        <pattern>/decorators/*</pattern>
+        <pattern>/WEB-INF/decorators/*</pattern>
+        <pattern>/common/*</pattern>
+        <pattern>/template/*</pattern>
+        <pattern>/static/*</pattern>
+        <pattern>/image*</pattern>
+    </excludes>
+
+    <decorator name="admin" page="admin.jsp">
+        <pattern>/admin/*</pattern>
+    </decorator>
+
+    <decorator name="web" page="web.jsp">
+        <pattern>/home*</pattern>
+        <pattern>/*</pattern>
+    </decorator>
+</decorators>
