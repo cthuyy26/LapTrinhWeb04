@@ -1,5 +1,6 @@
 package vn.iotstar.service;
 
+import java.util.List;
 import vn.iotstar.entity.User;
 
 public interface UserService {
@@ -8,6 +9,7 @@ public interface UserService {
 
     // Lấy thông tin user
     User get(String username);
+    User getByEmail(String email);
     User get(int id);
 
     // Đăng ký và thêm mới
@@ -17,10 +19,11 @@ public interface UserService {
     // Cập nhật thông tin
     void update(User user);
     boolean updateProfile(int id, String fullname, String phone, String avatar);
+    boolean resetPassword(String emailOrUsername, String newPassword);
 
     // Quản lý danh sách người dùng
-    java.util.List<User> findAll();
-    java.util.List<User> search(String keyword);
+    List<User> findAll();
+    List<User> search(String keyword);
     void delete(int id);
 
     // Kiểm tra tồn tại

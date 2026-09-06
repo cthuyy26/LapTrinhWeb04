@@ -1,5 +1,6 @@
 package vn.iotstar.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User get(String username) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return null;
         try {
             String jpql = "SELECT u FROM User u WHERE u.userName = :username";
             TypedQuery<User> query = em.createQuery(jpql, User.class);
@@ -24,26 +26,46 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             return null;
         } finally {
-            em.close();
+            if (em != null) em.close();
+        }
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return null;
+        try {
+            String jpql = "SELECT u FROM User u WHERE u.email = :email";
+            TypedQuery<User> query = em.createQuery(jpql, User.class);
+            query.setParameter("email", email);
+            List<User> list = query.getResultList();
+            return list.isEmpty() ? null : list.get(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (em != null) em.close();
         }
     }
 
     @Override
     public User get(int id) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return null;
         try {
             return em.find(User.class, id);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public void insert(User user) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return;
         EntityTransaction trans = em.getTransaction();
         try {
             trans.begin();
@@ -54,13 +76,14 @@ public class UserDaoImpl implements UserDao {
             if (trans.isActive()) trans.rollback();
             throw e;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public void update(User user) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return;
         EntityTransaction trans = em.getTransaction();
         try {
             trans.begin();
@@ -71,13 +94,14 @@ public class UserDaoImpl implements UserDao {
             if (trans.isActive()) trans.rollback();
             throw e;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public boolean checkExistEmail(String email) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return false;
         try {
             String jpql = "SELECT COUNT(u) FROM User u WHERE u.email = :email";
             TypedQuery<Long> query = em.createQuery(jpql, Long.class);
@@ -88,13 +112,14 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             return false;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public boolean checkExistEmailExceptUser(String email, int userId) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return false;
         try {
             String jpql = "SELECT COUNT(u) FROM User u WHERE u.email = :email AND u.id != :id";
             TypedQuery<Long> query = em.createQuery(jpql, Long.class);
@@ -106,13 +131,14 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             return false;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public boolean checkExistUsername(String username) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return false;
         try {
             String jpql = "SELECT COUNT(u) FROM User u WHERE u.userName = :username";
             TypedQuery<Long> query = em.createQuery(jpql, Long.class);
@@ -123,28 +149,30 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             return false;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public List<User> findAll() {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return new ArrayList<>();
         try {
             String jpql = "SELECT u FROM User u ORDER BY u.roleid ASC, u.id ASC";
             TypedQuery<User> query = em.createQuery(jpql, User.class);
             return query.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
-            return new java.util.ArrayList<>();
+            return new ArrayList<>();
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public List<User> search(String keyword) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return new ArrayList<>();
         try {
             String jpql = "SELECT u FROM User u WHERE u.userName LIKE :kw OR u.fullName LIKE :kw OR u.email LIKE :kw OR u.phone LIKE :kw ORDER BY u.roleid ASC, u.id ASC";
             TypedQuery<User> query = em.createQuery(jpql, User.class);
@@ -152,15 +180,16 @@ public class UserDaoImpl implements UserDao {
             return query.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
-            return new java.util.ArrayList<>();
+            return new ArrayList<>();
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public void delete(int id) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return;
         EntityTransaction trans = em.getTransaction();
         try {
             trans.begin();
@@ -174,13 +203,14 @@ public class UserDaoImpl implements UserDao {
             if (trans.isActive()) trans.rollback();
             throw e;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public boolean checkExistPhone(String phone) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return false;
         try {
             String jpql = "SELECT COUNT(u) FROM User u WHERE u.phone = :phone";
             TypedQuery<Long> query = em.createQuery(jpql, Long.class);
@@ -191,7 +221,7 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             return false;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 }

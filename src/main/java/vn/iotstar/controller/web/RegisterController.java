@@ -1,6 +1,7 @@
 package vn.iotstar.controller.web;
 
 import java.io.IOException;
+import java.sql.Date;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,6 +15,8 @@ import vn.iotstar.entity.User;
 import vn.iotstar.service.UserService;
 import vn.iotstar.service.impl.UserServiceImpl;
 import vn.iotstar.util.Constant;
+import vn.iotstar.util.EmailUtil;
+import vn.iotstar.util.OtpService;
 
 @SuppressWarnings("serial")
 @WebServlet(urlPatterns = "/register")
@@ -71,27 +74,39 @@ public class RegisterController extends HttpServlet {
             return;
         }
 
+        email = email.trim();
+        username = username.trim();
+
         if (service.checkExistEmail(email)) {
-            alertMsg = "Email đã tồn tại!";
+            alertMsg = "Email đã được đăng ký trong hệ thống!";
             req.setAttribute("alert", alertMsg);
             req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
             return;
         }
 
         if (service.checkExistUsername(username)) {
-            alertMsg = "Tài khoản đã tồn tại!";
+            alertMsg = "Tên tài khoản đã tồn tại!";
             req.setAttribute("alert", alertMsg);
             req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
             return;
         }
 
-        boolean isSuccess = service.register(username, password, email, fullname, phone);
-        if (isSuccess) {
-            resp.sendRedirect(req.getContextPath() + "/login");
-        } else {
-            alertMsg = "System error!";
-            req.setAttribute("alert", alertMsg);
-            req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
-        }
+        // Tạo đối tượng User tạm thời chờ xác thực OTP
+        long millis = System.currentTimeMillis();
+        Date date = new Date(millis);
+        User pendingUser = new User(email, username, fullname, password, null, 5, phone, date);
+
+        // Sinh mã OTP và lưu vào OtpService (kèm User data)
+        String otp = OtpService.createAndSaveOtp(email, pendingUser);
+
+        // Gửi email OTP
+        EmailUtil.sendOtpEmail(email, otp, "Mã Xác Thực Kích Hoạt Tài Khoản - Lap Trinh Web", "kích hoạt tài khoản mới");
+
+        // Lưu thông tin email chờ xác thực vào Session
+        HttpSession session = req.getSession(true);
+        session.setAttribute("pendingRegisterEmail", email);
+        session.setAttribute("devOtp", otp); // Hỗ trợ hiển thị gợi ý test nhanh trên giao diện
+
+        resp.sendRedirect(req.getContextPath() + "/verify-register-otp");
     }
 }

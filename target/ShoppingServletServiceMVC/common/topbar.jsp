@@ -11,14 +11,18 @@
             </a>
         </div>
 
-        <nav class="nav-links" style="display: flex; align-items: center; gap: 20px;">
+        <nav class="nav-links" style="display: flex; align-items: center; gap: 18px;">
             <a href="${pageContext.request.contextPath}/home" style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='#cbd5e1'">
                 <i class="fa fa-home"></i> Trang Chủ
             </a>
 
+            <a href="${pageContext.request.contextPath}/product" style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 14px; transition: color 0.2s;" onmouseover="this.style.color='#38bdf8'" onmouseout="this.style.color='#cbd5e1'">
+                <i class="fa fa-shopping-bag"></i> Sản Phẩm
+            </a>
+
             <c:choose>
                 <c:when test="${sessionScope.account == null}">
-                    <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center; margin-left: 10px;">
                         <a href="${pageContext.request.contextPath}/login" class="btn btn-sm btn-primary" style="background: #0284c7; border: none; padding: 6px 16px; border-radius: 6px; color: #fff; text-decoration: none; font-weight: 600;">
                             <i class="fa fa-sign-in"></i> Đăng nhập
                         </a>
@@ -28,9 +32,9 @@
                     </div>
                 </c:when>
                 <c:otherwise>
-                    <div class="user-menu" style="display: flex; align-items: center; gap: 15px;">
+                    <div class="user-menu" style="display: flex; align-items: center; gap: 15px; margin-left: 10px;">
                         <c:if test="${sessionScope.account.roleid == 1}">
-                            <a href="${pageContext.request.contextPath}/admin/category/list" style="background: rgba(234, 179, 8, 0.15); border: 1px solid #eab308; color: #fde047; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;">
+                            <a href="${pageContext.request.contextPath}/admin/product/list" style="background: rgba(234, 179, 8, 0.15); border: 1px solid #eab308; color: #fde047; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600;">
                                 <i class="fa fa-cogs"></i> Quản trị Admin
                             </a>
                         </c:if>

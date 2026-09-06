@@ -100,10 +100,12 @@
             </div>
 
             <ul class="admin-menu">
-                <li><a href="${pageContext.request.contextPath}/admin/user/list"><i class="fa fa-users"></i> Quản lý Người dùng</a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/user/add"><i class="fa fa-user-plus"></i> Thêm tài khoản mới</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/product/list"><i class="fa fa-cubes"></i> Quản lý Sản phẩm</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/product/add"><i class="fa fa-plus-square"></i> Thêm sản phẩm mới</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/category/list"><i class="fa fa-folder-open"></i> Quản lý Danh mục</a></li>
                 <li><a href="${pageContext.request.contextPath}/admin/category/add"><i class="fa fa-plus-circle"></i> Thêm danh mục mới</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/user/list"><i class="fa fa-users"></i> Quản lý Người dùng</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/user/add"><i class="fa fa-user-plus"></i> Thêm tài khoản mới</a></li>
                 <li><a href="${pageContext.request.contextPath}/profile"><i class="fa fa-user-circle"></i> Hồ sơ cá nhân (Profile)</a></li>
                 <li><a href="${pageContext.request.contextPath}/home"><i class="fa fa-home"></i> Về trang chủ</a></li>
                 <li><a href="${pageContext.request.contextPath}/logout" style="color: #f87171;"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>

@@ -1,13 +1,18 @@
 package vn.iotstar.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -31,6 +36,10 @@ public class Category implements Serializable {
     // ĐỔI TỪ int SANG Integer ĐỂ CHẤP NHẬN GIÁ TRỊ NULL
     @Column(name = "status")
     private Integer status = 1;
+
+    // Quan hệ 1 - nhiều với bảng Product
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Product> products = new ArrayList<>();
 
     // 1. Constructor không tham số (Bắt buộc cho JPA)
     public Category() {
@@ -84,5 +93,13 @@ public class Category implements Serializable {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }

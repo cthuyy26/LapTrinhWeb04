@@ -25,7 +25,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String username, String password) {
         User user = this.get(username);
-        if (user != null && password.equals(user.getPassWord())) {
+        if (user == null) {
+            user = this.getByEmail(username);
+        }
+        if (user != null && password != null && password.equals(user.getPassWord())) {
             return user;
         }
         return null;
@@ -50,6 +53,25 @@ public class UserServiceImpl implements UserService {
             try {
                 userDao.update(user);
             } catch (Exception ignored) {}
+        }
+        return user;
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        User user = null;
+        try {
+            user = userDao.getByEmail(email);
+        } catch (Exception e) {
+            System.err.println("Lỗi truy vấn UserDao.getByEmail(email): " + e.getMessage());
+        }
+
+        if (user == null) {
+            for (User u : mockUsers.values()) {
+                if (email != null && email.equalsIgnoreCase(u.getEmail())) {
+                    return u;
+                }
+            }
         }
         return user;
     }
@@ -82,7 +104,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean register(String username, String password, String email, String fullname, String phone) {
-        if (checkExistUsername(username)) {
+        if (checkExistUsername(username) || checkExistEmail(email)) {
             return false;
         }
         long millis = System.currentTimeMillis();
@@ -132,6 +154,20 @@ public class UserServiceImpl implements UserService {
             if (avatar != null && !avatar.isEmpty()) {
                 user.setAvatar(avatar);
             }
+            this.update(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean resetPassword(String emailOrUsername, String newPassword) {
+        User user = this.getByEmail(emailOrUsername);
+        if (user == null) {
+            user = this.get(emailOrUsername);
+        }
+        if (user != null) {
+            user.setPassWord(newPassword);
             this.update(user);
             return true;
         }
@@ -197,7 +233,7 @@ public class UserServiceImpl implements UserService {
         } catch (Exception ignored) {}
 
         for (User u : mockUsers.values()) {
-            if (email.equalsIgnoreCase(u.getEmail())) {
+            if (email != null && email.equalsIgnoreCase(u.getEmail())) {
                 return true;
             }
         }
@@ -213,7 +249,7 @@ public class UserServiceImpl implements UserService {
         } catch (Exception ignored) {}
 
         for (User u : mockUsers.values()) {
-            if (u.getId() != userId && email.equalsIgnoreCase(u.getEmail())) {
+            if (u.getId() != userId && email != null && email.equalsIgnoreCase(u.getEmail())) {
                 return true;
             }
         }

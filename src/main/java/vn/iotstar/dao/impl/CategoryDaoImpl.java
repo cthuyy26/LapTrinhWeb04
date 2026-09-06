@@ -1,5 +1,6 @@
 package vn.iotstar.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public void insert(Category category) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return;
         EntityTransaction trans = em.getTransaction();
         try {
             trans.begin();
@@ -24,13 +26,14 @@ public class CategoryDaoImpl implements CategoryDao {
             if (trans.isActive()) trans.rollback();
             throw e;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public void edit(Category category) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return;
         EntityTransaction trans = em.getTransaction();
         try {
             trans.begin();
@@ -41,13 +44,14 @@ public class CategoryDaoImpl implements CategoryDao {
             if (trans.isActive()) trans.rollback();
             throw e;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public void delete(int id) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return;
         EntityTransaction trans = em.getTransaction();
         try {
             trans.begin();
@@ -61,23 +65,25 @@ public class CategoryDaoImpl implements CategoryDao {
             if (trans.isActive()) trans.rollback();
             throw e;
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public Category get(int id) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return null;
         try {
             return em.find(Category.class, id);
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public Category get(String name) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return null;
         try {
             String jpql = "SELECT c FROM Category c WHERE c.name = :name";
             TypedQuery<Category> query = em.createQuery(jpql, Category.class);
@@ -85,31 +91,33 @@ public class CategoryDaoImpl implements CategoryDao {
             List<Category> list = query.getResultList();
             return list.isEmpty() ? null : list.get(0);
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public List<Category> getAll() {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return new ArrayList<>();
         try {
             TypedQuery<Category> query = em.createNamedQuery("Category.findAll", Category.class);
             return query.getResultList();
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 
     @Override
     public List<Category> search(String keyword) {
         EntityManager em = JpaConfig.getEntityManager();
+        if (em == null) return new ArrayList<>();
         try {
             String jpql = "SELECT c FROM Category c WHERE c.name LIKE :kw";
             TypedQuery<Category> query = em.createQuery(jpql, Category.class);
             query.setParameter("kw", "%" + keyword + "%");
             return query.getResultList();
         } finally {
-            em.close();
+            if (em != null) em.close();
         }
     }
 }

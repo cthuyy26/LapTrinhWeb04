@@ -1,10 +1,14 @@
 package vn.iotstar.dao;
 
+import java.util.List;
 import vn.iotstar.entity.User;
 
 public interface UserDao {
     // Tìm người dùng theo username
     User get(String username);
+
+    // Tìm người dùng theo email
+    User getByEmail(String email);
 
     // Tìm người dùng theo id
     User get(int id);
@@ -16,8 +20,8 @@ public interface UserDao {
     void update(User user);
 
     // Quản lý danh sách người dùng
-    java.util.List<User> findAll();
-    java.util.List<User> search(String keyword);
+    List<User> findAll();
+    List<User> search(String keyword);
     void delete(int id);
 
     // Kiểm tra trùng lặp
