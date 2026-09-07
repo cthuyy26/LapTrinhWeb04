@@ -8,6 +8,11 @@
 </head>
 <body>
 <div style="max-width: 650px; margin: 20px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger" style="border-radius: 6px; margin-bottom: 20px;">
+            <i class="fa fa-exclamation-triangle"></i> <strong>Lỗi:</strong> ${error}
+        </div>
+    </c:if>
     <h3 style="margin-top: 0; border-bottom: 2px solid #0284c7; padding-bottom: 12px; color: #0f172a; font-weight: 700;">
         <i class="fa fa-plus-circle text-primary"></i> Thêm Danh Mục Mới
     </h3>

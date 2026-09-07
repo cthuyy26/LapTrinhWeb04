@@ -52,6 +52,13 @@ public class ProductAddController extends HttpServlet {
         String statusStr = req.getParameter("status");
         String cateIdStr = req.getParameter("categoryId");
 
+        if (name == null || name.trim().isEmpty()) {
+            req.setAttribute("error", "Tên sản phẩm không được để trống!");
+            req.setAttribute("categoryList", categoryService.getAll());
+            req.getRequestDispatcher("/views/admin/product/add-product.jsp").forward(req, resp);
+            return;
+        }
+
         double price = 0;
         int quantity = 0;
         int status = 1;
@@ -74,13 +81,27 @@ public class ProductAddController extends HttpServlet {
             e.printStackTrace();
         }
 
+        if (price <= 0) {
+            req.setAttribute("error", "Đơn giá sản phẩm phải lớn hơn 0 VNĐ!");
+            req.setAttribute("categoryList", categoryService.getAll());
+            req.getRequestDispatcher("/views/admin/product/add-product.jsp").forward(req, resp);
+            return;
+        }
+
+        if (quantity < 0) {
+            req.setAttribute("error", "Số lượng sản phẩm không được là số âm!");
+            req.setAttribute("categoryList", categoryService.getAll());
+            req.getRequestDispatcher("/views/admin/product/add-product.jsp").forward(req, resp);
+            return;
+        }
+
         Category category = categoryService.get(cateId);
         if (category == null) {
             category = new Category(cateId, "Danh Mục Mặc Định", null, 1);
         }
 
         Product product = new Product();
-        product.setName(name);
+        product.setName(name.trim());
         product.setDescription(description);
         product.setPrice(price);
         product.setQuantity(quantity);
@@ -107,11 +128,14 @@ public class ProductAddController extends HttpServlet {
             } else {
                 product.setImage(null);
             }
+
+            productService.insert(product);
+            resp.sendRedirect(req.getContextPath() + "/admin/product/list");
         } catch (Exception e) {
             e.printStackTrace();
+            req.setAttribute("error", "Lỗi khi thêm sản phẩm: " + e.getMessage());
+            req.setAttribute("categoryList", categoryService.getAll());
+            req.getRequestDispatcher("/views/admin/product/add-product.jsp").forward(req, resp);
         }
-
-        productService.insert(product);
-        resp.sendRedirect(req.getContextPath() + "/admin/product/list");
     }
 }

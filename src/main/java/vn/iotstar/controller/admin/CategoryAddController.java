@@ -38,8 +38,14 @@ public class CategoryAddController extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
 
         String name = req.getParameter("name");
+        if (name == null || name.trim().isEmpty()) {
+            req.setAttribute("error", "Tên danh mục không được để trống!");
+            req.getRequestDispatcher("/views/admin/add-category.jsp").forward(req, resp);
+            return;
+        }
+
         Category category = new Category();
-        category.setName(name);
+        category.setName(name.trim());
 
         try {
             Part filePart = req.getPart("icon");
@@ -59,11 +65,13 @@ public class CategoryAddController extends HttpServlet {
             } else {
                 category.setIcon(null);
             }
+
+            cateService.insert(category);
+            resp.sendRedirect(req.getContextPath() + "/admin/category/list");
         } catch (Exception e) {
             e.printStackTrace();
+            req.setAttribute("error", "Lỗi khi thêm danh mục: " + e.getMessage());
+            req.getRequestDispatcher("/views/admin/add-category.jsp").forward(req, resp);
         }
-
-        cateService.insert(category);
-        resp.sendRedirect(req.getContextPath() + "/admin/category/list");
     }
 }

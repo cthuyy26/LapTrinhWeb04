@@ -102,29 +102,60 @@ public class UserEditController extends HttpServlet {
         String password = req.getParameter("password");
         String roleidStr = req.getParameter("roleid");
 
-        if (fullname != null && !fullname.trim().isEmpty()) {
-            user.setFullName(fullname.trim());
+        if (fullname == null || fullname.trim().isEmpty()) {
+            req.setAttribute("error", "Họ và tên không được để trống!");
+            req.setAttribute("user", user);
+            req.getRequestDispatcher("/views/admin/user/edit-user.jsp").forward(req, resp);
+            return;
+        }
+        user.setFullName(fullname.trim());
+
+        if (email == null || email.trim().isEmpty()) {
+            req.setAttribute("error", "Địa chỉ email không được để trống!");
+            req.setAttribute("user", user);
+            req.getRequestDispatcher("/views/admin/user/edit-user.jsp").forward(req, resp);
+            return;
         }
 
-        if (email != null && !email.trim().isEmpty()) {
-            String newEmail = email.trim();
-            if (!newEmail.equalsIgnoreCase(user.getEmail())) {
-                if (userService.checkExistEmailExceptUser(newEmail, user.getId())) {
-                    req.setAttribute("error", "Địa chỉ email '" + newEmail + "' đã được sử dụng bởi người dùng khác!");
-                    req.setAttribute("user", user);
-                    req.getRequestDispatcher("/views/admin/user/edit-user.jsp").forward(req, resp);
-                    return;
-                } else {
-                    user.setEmail(newEmail);
-                }
+        String newEmail = email.trim();
+        if (!newEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            req.setAttribute("error", "Địa chỉ email không đúng định dạng!");
+            req.setAttribute("user", user);
+            req.getRequestDispatcher("/views/admin/user/edit-user.jsp").forward(req, resp);
+            return;
+        }
+
+        if (!newEmail.equalsIgnoreCase(user.getEmail())) {
+            if (userService.checkExistEmailExceptUser(newEmail, user.getId())) {
+                req.setAttribute("error", "Địa chỉ email '" + newEmail + "' đã được sử dụng bởi người dùng khác!");
+                req.setAttribute("user", user);
+                req.getRequestDispatcher("/views/admin/user/edit-user.jsp").forward(req, resp);
+                return;
+            } else {
+                user.setEmail(newEmail);
             }
         }
 
-        if (phone != null) {
-            user.setPhone(phone.trim());
+        if (phone != null && !phone.trim().isEmpty()) {
+            String cleanPhone = phone.trim();
+            if (!cleanPhone.matches("^[0-9]{9,11}$")) {
+                req.setAttribute("error", "Số điện thoại không hợp lệ (từ 9 đến 11 chữ số)!");
+                req.setAttribute("user", user);
+                req.getRequestDispatcher("/views/admin/user/edit-user.jsp").forward(req, resp);
+                return;
+            }
+            user.setPhone(cleanPhone);
+        } else {
+            user.setPhone(null);
         }
 
         if (password != null && !password.trim().isEmpty()) {
+            if (password.trim().length() < 6) {
+                req.setAttribute("error", "Mật khẩu mới phải có ít nhất 6 ký tự!");
+                req.setAttribute("user", user);
+                req.getRequestDispatcher("/views/admin/user/edit-user.jsp").forward(req, resp);
+                return;
+            }
             user.setPassWord(password.trim());
         }
 

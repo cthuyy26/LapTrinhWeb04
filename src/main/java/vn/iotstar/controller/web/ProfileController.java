@@ -77,19 +77,42 @@ public class ProfileController extends HttpServlet {
         String phone = req.getParameter("phone");
         String email = req.getParameter("email");
 
-        if (fullName != null && !fullName.trim().isEmpty()) {
-            user.setFullName(fullName.trim());
+        if (fullName == null || fullName.trim().isEmpty()) {
+            req.setAttribute("error", "Họ và tên không được để trống!");
+            req.setAttribute("user", user);
+            req.getRequestDispatcher(Constant.Path.PROFILE).forward(req, resp);
+            return;
         }
-        if (phone != null) {
-            user.setPhone(phone.trim());
+        user.setFullName(fullName.trim());
+
+        if (phone != null && !phone.trim().isEmpty()) {
+            String cleanPhone = phone.trim();
+            if (!cleanPhone.matches("^[0-9]{9,11}$")) {
+                req.setAttribute("error", "Số điện thoại không hợp lệ! Vui lòng nhập từ 9 đến 11 chữ số.");
+                req.setAttribute("user", user);
+                req.getRequestDispatcher(Constant.Path.PROFILE).forward(req, resp);
+                return;
+            }
+            user.setPhone(cleanPhone);
+        } else {
+            user.setPhone(null);
         }
 
-        // Admin có toàn quyền đổi email của chính admin
+        // Admin có quyền đổi email của chính admin
         if (user.getRoleid() == 1 && email != null && !email.trim().isEmpty()) {
             String newEmail = email.trim();
+            if (!newEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                req.setAttribute("error", "Định dạng email không hợp lệ!");
+                req.setAttribute("user", user);
+                req.getRequestDispatcher(Constant.Path.PROFILE).forward(req, resp);
+                return;
+            }
             if (!newEmail.equalsIgnoreCase(user.getEmail())) {
                 if (userService.checkExistEmailExceptUser(newEmail, user.getId())) {
-                    req.setAttribute("error", "Địa chỉ email đã được sử dụng bởi tài khoản khác!");
+                    req.setAttribute("error", "Địa chỉ email '" + newEmail + "' đã được sử dụng bởi tài khoản khác!");
+                    req.setAttribute("user", user);
+                    req.getRequestDispatcher(Constant.Path.PROFILE).forward(req, resp);
+                    return;
                 } else {
                     user.setEmail(newEmail);
                 }
@@ -108,7 +131,14 @@ public class ProfileController extends HttpServlet {
                 String ext = "";
                 int idx = submittedFileName.lastIndexOf(".");
                 if (idx >= 0) {
-                    ext = submittedFileName.substring(idx);
+                    ext = submittedFileName.substring(idx).toLowerCase();
+                }
+
+                if (!ext.equals(".jpg") && !ext.equals(".jpeg") && !ext.equals(".png") && !ext.equals(".gif") && !ext.equals(".webp")) {
+                    req.setAttribute("error", "Định dạng file ảnh không hợp lệ! Chỉ chấp nhận: JPG, JPEG, PNG, GIF, WEBP.");
+                    req.setAttribute("user", user);
+                    req.getRequestDispatcher(Constant.Path.PROFILE).forward(req, resp);
+                    return;
                 }
 
                 String fileName = System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 8) + ext;
@@ -124,6 +154,9 @@ public class ProfileController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             req.setAttribute("error", "Lỗi trong quá trình upload hình ảnh: " + e.getMessage());
+            req.setAttribute("user", user);
+            req.getRequestDispatcher(Constant.Path.PROFILE).forward(req, resp);
+            return;
         }
 
         try {

@@ -14,6 +14,12 @@
         <small style="color: #64748b;">Cập nhật thông tin, thay đổi hình ảnh và danh mục sản phẩm</small>
     </div>
 
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger" style="border-radius: 8px; border-left: 5px solid #ef4444; max-width: 800px; margin-bottom: 20px;">
+            <i class="fa fa-exclamation-triangle"></i> <strong>Lỗi!</strong> ${error}
+        </div>
+    </c:if>
+
     <div class="panel panel-default" style="max-width: 800px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
         <div class="panel-heading" style="background: #f8fafc; font-weight: 600; color: #334155; padding: 12px 20px;">
             <i class="fa fa-pencil-square-o"></i> Biểu mẫu cập nhật

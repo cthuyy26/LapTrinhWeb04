@@ -70,6 +70,12 @@ public class ResetPasswordController extends HttpServlet {
             return;
         }
 
+        if (newPassword.length() < 6) {
+            req.setAttribute("alert", "Mật khẩu mới phải có ít nhất 6 ký tự!");
+            req.getRequestDispatcher(Constant.Path.RESET_PASSWORD).forward(req, resp);
+            return;
+        }
+
         if (!newPassword.equals(confirmPassword)) {
             req.setAttribute("alert", "Mật khẩu xác nhận không khớp!");
             req.getRequestDispatcher(Constant.Path.RESET_PASSWORD).forward(req, resp);

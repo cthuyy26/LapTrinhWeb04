@@ -45,11 +45,20 @@ public class CategoryEditController extends HttpServlet {
         String idStr = req.getParameter("id");
         String name = req.getParameter("name");
 
+        if (name == null || name.trim().isEmpty()) {
+            req.setAttribute("error", "Tên danh mục không được để trống!");
+            if (idStr != null && !idStr.isEmpty()) {
+                req.setAttribute("category", cateService.get(Integer.parseInt(idStr)));
+            }
+            req.getRequestDispatcher("/views/admin/edit-category.jsp").forward(req, resp);
+            return;
+        }
+
         Category category = new Category();
         if (idStr != null && !idStr.isEmpty()) {
             category.setId(Integer.parseInt(idStr));
         }
-        category.setName(name);
+        category.setName(name.trim());
 
         try {
             Part filePart = req.getPart("icon");
@@ -73,11 +82,14 @@ public class CategoryEditController extends HttpServlet {
                     category.setIcon(old.getIcon());
                 }
             }
+
+            cateService.edit(category);
+            resp.sendRedirect(req.getContextPath() + "/admin/category/list");
         } catch (Exception e) {
             e.printStackTrace();
+            req.setAttribute("error", "Lỗi khi cập nhật danh mục: " + e.getMessage());
+            req.setAttribute("category", category);
+            req.getRequestDispatcher("/views/admin/edit-category.jsp").forward(req, resp);
         }
-
-        cateService.edit(category);
-        resp.sendRedirect(req.getContextPath() + "/admin/category/list");
     }
 }

@@ -88,6 +88,26 @@ public class UserAddController extends HttpServlet {
             return;
         }
 
+        if (password.trim().length() < 6) {
+            req.setAttribute("error", "Mật khẩu phải có ít nhất 6 ký tự!");
+            req.getRequestDispatcher("/views/admin/user/add-user.jsp").forward(req, resp);
+            return;
+        }
+
+        if (!email.trim().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            req.setAttribute("error", "Địa chỉ email không đúng định dạng!");
+            req.getRequestDispatcher("/views/admin/user/add-user.jsp").forward(req, resp);
+            return;
+        }
+
+        if (phone != null && !phone.trim().isEmpty()) {
+            if (!phone.trim().matches("^[0-9]{9,11}$")) {
+                req.setAttribute("error", "Số điện thoại không hợp lệ (từ 9 đến 11 số)!");
+                req.getRequestDispatcher("/views/admin/user/add-user.jsp").forward(req, resp);
+                return;
+            }
+        }
+
         if (userService.checkExistUsername(username.trim())) {
             req.setAttribute("error", "Tên tài khoản '" + username.trim() + "' đã tồn tại!");
             req.getRequestDispatcher("/views/admin/user/add-user.jsp").forward(req, resp);

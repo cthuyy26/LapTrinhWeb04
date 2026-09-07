@@ -30,7 +30,6 @@ vn\iotstar\dao\impl\UserDaoImpl.class
 vn\iotstar\controller\admin\ProductAddController.class
 vn\iotstar\dao\impl\ProductDaoImpl.class
 vn\iotstar\controller\web\LogoutController.class
-META-INF\persistence.xml
 vn\iotstar\config\JpaConfig.class
 vn\iotstar\entity\User.class
 vn\iotstar\service\CategoryService.class

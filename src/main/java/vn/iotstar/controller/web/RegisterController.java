@@ -67,8 +67,8 @@ public class RegisterController extends HttpServlet {
         UserService service = new UserServiceImpl();
         String alertMsg = "";
 
-        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty() || email == null || email.trim().isEmpty()) {
-            alertMsg = "Vui lòng nhập đầy đủ các trường bắt buộc!";
+        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty() || email == null || email.trim().isEmpty() || fullname == null || fullname.trim().isEmpty()) {
+            alertMsg = "Vui lòng nhập đầy đủ các trường bắt buộc (*)!";
             req.setAttribute("alert", alertMsg);
             req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
             return;
@@ -76,6 +76,40 @@ public class RegisterController extends HttpServlet {
 
         email = email.trim();
         username = username.trim();
+        fullname = fullname.trim();
+
+        if (username.length() < 3 || username.length() > 30) {
+            alertMsg = "Tên tài khoản phải từ 3 đến 30 ký tự!";
+            req.setAttribute("alert", alertMsg);
+            req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
+            return;
+        }
+
+        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            alertMsg = "Địa chỉ email không đúng định dạng!";
+            req.setAttribute("alert", alertMsg);
+            req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
+            return;
+        }
+
+        if (password.length() < 6) {
+            alertMsg = "Mật khẩu phải có độ dài từ 6 ký tự trở lên!";
+            req.setAttribute("alert", alertMsg);
+            req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
+            return;
+        }
+
+        if (phone != null && !phone.trim().isEmpty()) {
+            phone = phone.trim();
+            if (!phone.matches("^[0-9]{9,11}$")) {
+                alertMsg = "Số điện thoại không hợp lệ (từ 9 đến 11 chữ số)!";
+                req.setAttribute("alert", alertMsg);
+                req.getRequestDispatcher(Constant.Path.REGISTER).forward(req, resp);
+                return;
+            }
+        } else {
+            phone = null;
+        }
 
         if (service.checkExistEmail(email)) {
             alertMsg = "Email đã được đăng ký trong hệ thống!";
